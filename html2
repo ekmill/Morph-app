@@ -220,12 +220,13 @@
             
             <!-- Main Content Area -->
             <div class="lg:col-span-2">
-                <!-- Step 1: Word Inquiry -->
+                
+                <!-- Step 1: Word Investigation -->
                 <section id="step1" class="bg-white rounded-2xl shadow-xl p-6 mb-6">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-2xl font-bold text-gray-800 kid-font flex items-center">
                             <span class="text-3xl mr-3">🔍</span>
-                            Step 1: Pick a Word
+                            Step 1: Choose Your Word
                         </h2>
                         <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold">Active</span>
                     </div>

@@ -3,7 +3,7 @@ let currentWord = '';
 let currentStep = 1;
 let selectedMorphemes = [];
 
-// Word data (would come from AI backend in production)
+// Word data (pull from etymonline in production)
 const wordData = {
     'unhappiness': {
         meaning: 'The state of not being happy; sadness or sorrow.',
