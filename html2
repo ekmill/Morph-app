@@ -204,12 +204,8 @@
                     <p class="text-xs font-semibold">3. Etymology</p>
                 </div>
                 <div class="progress-step flex-1 text-center py-3 rounded-lg mx-1 bg-gray-100 text-gray-600 transition-all">
-                    <i class="fas fa-volume-up text-xl mb-1"></i>
-                    <p class="text-xs font-semibold">4. Sounds</p>
-                </div>
-                <div class="progress-step flex-1 text-center py-3 rounded-lg mx-1 bg-gray-100 text-gray-600 transition-all">
                     <i class="fas fa-flask text-xl mb-1"></i>
-                    <p class="text-xs font-semibold">5. Test</p>
+                    <p class="text-xs font-semibold">4. Test</p>
                 </div>
             </div>
         </div>
