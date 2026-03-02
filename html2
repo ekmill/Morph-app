@@ -164,15 +164,15 @@
 <body class="bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 min-h-screen">
     
     <!-- Header -->
-   <header class="bg-white shadow-lg">
+    <header class="bg-white shadow-lg">
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl">
-                        🔍
+                    🦊
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-800 kid-font">Word Detective AI</h1>
+                        <h1 class="text-2xl font-bold text-gray-800 kid-font">Morphology Fox</h1>
                         <p class="text-sm text-gray-600">Discover the Magic of Words!</p>
                     </div>
                 </div>
@@ -216,14 +216,13 @@
             
             <!-- Main Content Area -->
             <div class="lg:col-span-2">
-
                 
-                <!-- Step 1: Word investigation -->
+                <!-- Step 1: Word Investigation -->
                 <section id="step1" class="bg-white rounded-2xl shadow-xl p-6 mb-6">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-2xl font-bold text-gray-800 kid-font flex items-center">
                             <span class="text-3xl mr-3">🔍</span>
-                            shit 1: Choose Your Word
+                            Step 1: Choose Your Word
                         </h2>
                         <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold">Active</span>
                     </div>
@@ -351,13 +350,58 @@
                     </div>
                 </section>
 
+                <!-- Step 4: Grapheme-Phoneme -->
+                <section id="step4" class="bg-white rounded-2xl shadow-xl p-6 mb-6 hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800 kid-font flex items-center">
+                            <span class="text-3xl mr-3">🔊</span>
+                            Step 4: Sounds &amp; Letters
+                        </h2>
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">Active</span>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <p class="text-gray-700 mb-4">Match the letters (graphemes) to their sounds (phonemes):</p>
+                        
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <div class="mb-4">
+                                <h4 class="font-bold text-gray-800 mb-3">Letters (Graphemes):</h4>
+                                <div id="graphemeDisplay" class="flex flex-wrap justify-center">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <div class="text-center my-6">
+                                <i class="fas fa-arrow-down text-3xl text-gray-400"></i>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-3">Sounds (Phonemes):</h4>
+                                <div id="phonemeDisplay" class="flex flex-wrap justify-center">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <button onclick="playWordAudio()" class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
+                                <i class="fas fa-play mr-2"></i> Hear the Word
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 border-2 border-blue-300 rounded-lg p-4">
+                        <h4 class="font-bold text-blue-800 mb-2">💡 Why this spelling?</h4>
+                        <p id="spellingExplanation" class="text-gray-700"></p>
+                    </div>
+                </section>
 
-                <!-- Step 4: Hypothesis Testing -->
+                <!-- Step 5: Hypothesis Testing -->
                 <section id="step5" class="bg-white rounded-2xl shadow-xl p-6 mb-6 hidden">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-2xl font-bold text-gray-800 kid-font flex items-center">
                             <span class="text-3xl mr-3">🔬</span>
-                            Step 4: Test Your Ideas!
+                            Step 5: Test Your Ideas!
                         </h2>
                         <span class="bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm font-semibold">Active</span>
                     </div>
@@ -489,7 +533,7 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 
     <!-- Success Modal -->
     <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
