@@ -1,2 +1,2 @@
 # Morph-app
-Investigating English Morphology using Python
+Investigating English Morphology
