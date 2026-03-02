@@ -1,1 +1,553 @@
+// Current state
+let currentWord = '';
+let currentStep = 1;
+let selectedMorphemes = [];
 
+// Word data (would come from AI backend in production)
+const wordData = {
+    'unhappiness': {
+        meaning: 'The state of not being happy; sadness or sorrow.',
+        morphemes: {
+            prefix: ['un'],
+            base: ['happy'],
+            suffix: ['ness']
+        },
+        wordSum: 'un + happy + ness = unhappiness',
+        matrix: {
+            base: 'happy',
+            related: [
+                ['unhappy', 'happy', 'happier', 'happiest'],
+                ['unhappily', 'happily', 'happiness', 'unhappiness']
+            ],
+            prefixes: ['un'],
+            suffixes: ['ness', 'ly', 'er', 'est']
+        },
+        etymology: {
+            modern: 'unhappiness (English, 2026)',
+            stages: [
+                { word: 'happiness', language: 'Middle English (1300s)', note: 'hap (luck) + -ness' },
+                { word: 'hap', language: 'Old Norse (1000s)', note: 'meaning "luck, chance"' }
+            ],
+            fact: 'The word "happy" originally meant "lucky"! It comes from the Old Norse word "hap" meaning chance or luck. Over time, it changed to mean the feeling we have when good things happen to us.'
+        },
+        graphemes: ['u', 'n', 'h', 'a', 'pp', 'y', 'n', 'e', 'ss'],
+        phonemes: ['/ʌ/', '/n/', '/h/', '/æ/', '/p/', '/i/', '/n/', '/ə/', '/s/'],
+        spellingRule: 'The double "p" in "happy" stays when we add suffixes because it keeps the vowel sound short. The "y" changes to "i" before adding "-ness".',
+        hypothesis: 'When a word ends in "y" after a consonant, we change "y" to "i" before adding suffixes like "-ness".',
+        testWords: ['happy→happiness', 'silly→silliness', 'crazy→craziness', 'beauty→beautiful', 'busy→business']
+    },
+    'discover': {
+        meaning: 'To find or learn something for the first time.',
+        morphemes: {
+            prefix: ['dis'],
+            base: ['cover'],
+            suffix: []
+        },
+        wordSum: 'dis + cover = discover',
+        matrix: {
+            base: 'cover',
+            related: [
+                ['discover', 'cover', 'uncover', 'recover'],
+                ['discovery', 'coverage', 'covering', 'recovery']
+            ],
+            prefixes: ['dis', 'un', 're'],
+            suffixes: ['y', 'age', 'ing']
+        },
+        etymology: {
+            modern: 'discover (English, 2026)',
+            stages: [
+                { word: 'discoveren', language: 'Middle English (1300s)', note: 'from Old French' },
+                { word: 'descouvrir', language: 'Old French (1100s)', note: 'des- (opposite) + couvrir (cover)' },
+                { word: 'cooperire', language: 'Latin (100 BCE)', note: 'co- (completely) + operire (cover)' }
+            ],
+            fact: 'The word "discover" literally means "to un-cover"! The prefix "dis-" means "opposite of," so when you discover something, you\'re removing the cover to see what\'s underneath.'
+        },
+        graphemes: ['d', 'i', 's', 'c', 'o', 'v', 'e', 'r'],
+        phonemes: ['/d/', '/ɪ/', '/s/', '/k/', '/ʌ/', '/v/', '/ə/', '/r/'],
+        spellingRule: 'The "c" makes a /k/ sound before "o". The final "er" is a common spelling for the /ər/ sound at the end of words.',
+        hypothesis: 'The letter "c" makes a /k/ sound when it comes before "o", "a", or "u".',
+        testWords: ['cover', 'come', 'cat', 'cup', 'ocean']
+    },
+    'wonderful': {
+        meaning: 'Extremely good; causing wonder and delight.',
+        morphemes: {
+            prefix: [],
+            base: ['wonder'],
+            suffix: ['ful']
+        },
+        wordSum: 'wonder + ful = wonderful',
+        matrix: {
+            base: 'wonder',
+            related: [
+                ['wonder', 'wonderful', 'wonderfully', 'wonderment'],
+                ['wonders', 'wondered', 'wondering', 'wonderous']
+            ],
+            prefixes: [],
+            suffixes: ['ful', 'fully', 'ment', 'ous', 's', 'ed', 'ing']
+        },
+        etymology: {
+            modern: 'wonderful (English, 2026)',
+            stages: [
+                { word: 'wonderful', language: 'Middle English (1300s)', note: 'wonder + -ful (full of)' },
+                { word: 'wundor', language: 'Old English (700s)', note: 'meaning "marvelous thing"' },
+                { word: 'wundram', language: 'Proto-Germanic (500 BCE)', note: 'meaning "miracle"' }
+            ],
+            fact: 'The suffix "-ful" means "full of," so "wonderful" literally means "full of wonder"! This same suffix appears in beautiful, helpful, and colorful.'
+        },
+        graphemes: ['w', 'o', 'n', 'd', 'e', 'r', 'f', 'u', 'l'],
+        phonemes: ['/w/', '/ʌ/', '/n/', '/d/', '/ə/', '/r/', '/f/', '/ə/', '/l/'],
+        spellingRule: 'The suffix "-ful" is spelled with only one "l" even though "full" has two. This is a special spelling rule for suffixes.',
+        hypothesis: 'The suffix "-ful" is always spelled with one "l", not two.',
+        testWords: ['beautiful', 'helpful', 'colorful', 'grateful', 'peaceful']
+    },
+    'bicycle': {
+        meaning: 'A vehicle with two wheels that you ride by pushing pedals.',
+        morphemes: {
+            prefix: ['bi'],
+            base: ['cycle'],
+            suffix: []
+        },
+        wordSum: 'bi + cycle = bicycle',
+        matrix: {
+            base: 'cycle',
+            related: [
+                ['bicycle', 'cycle', 'tricycle', 'unicycle'],
+                ['cyclist', 'cycling', 'cycled', 'recycle']
+            ],
+            prefixes: ['bi', 'tri', 'uni', 're'],
+            suffixes: ['ist', 'ing', 'ed']
+        },
+        etymology: {
+            modern: 'bicycle (English, 2026)',
+            stages: [
+                { word: 'bicycle', language: 'French (1860s)', note: 'bi- (two) + cycle (wheel)' },
+                { word: 'kyklos', language: 'Greek (400 BCE)', note: 'meaning "circle, wheel"' }
+            ],
+            fact: 'The prefix "bi-" means "two" and comes from Latin! You can find it in many words: bilingual (two languages), binoculars (two eyes), and biweekly (every two weeks).'
+        },
+        graphemes: ['b', 'i', 'c', 'y', 'c', 'l', 'e'],
+        phonemes: ['/b/', '/aɪ/', '/s/', '/ɪ/', '/k/', '/ə/', '/l/'],
+        spellingRule: 'The letter "c" can make two sounds: /s/ before "i", "e", or "y" (like the first c), and /k/ before "a", "o", or "u" (like the second c).',
+        hypothesis: 'The letter "c" makes a /s/ sound when followed by "i", "e", or "y".',
+        testWords: ['city', 'center', 'cycle', 'ice', 'pencil']
+    },
+    'television': {
+        meaning: 'A device that receives broadcast signals and displays moving pictures with sound.',
+        morphemes: {
+            prefix: ['tele'],
+            base: ['vis'],
+            suffix: ['ion']
+        },
+        wordSum: 'tele + vis + ion = television',
+        matrix: {
+            base: 'vis',
+            related: [
+                ['television', 'vision', 'visible', 'visual'],
+                ['televise', 'revise', 'supervise', 'invisible']
+            ],
+            prefixes: ['tele', 're', 'super', 'in'],
+            suffixes: ['ion', 'ible', 'ual', 'e']
+        },
+        etymology: {
+            modern: 'television (English, 2026)',
+            stages: [
+                { word: 'television', language: 'English (1907)', note: 'tele- (far) + vision (seeing)' },
+                { word: 'tele', language: 'Greek (400 BCE)', note: 'meaning "far off, distant"' },
+                { word: 'videre', language: 'Latin (100 BCE)', note: 'meaning "to see"' }
+            ],
+            fact: 'Television literally means "far seeing"! "Tele-" means "far" (like in telephone and telescope) and "vision" means "seeing." It was named this because it lets us see things happening far away!'
+        },
+        graphemes: ['t', 'e', 'l', 'e', 'v', 'i', 's', 'i', 'o', 'n'],
+        phonemes: ['/t/', '/ɛ/', '/l/', '/ə/', '/v/', '/ɪ/', '/ʒ/', '/ə/', '/n/'],
+        spellingRule: 'The suffix "-ion" is added to verb bases to make nouns. The "s" in "vision" makes a /ʒ/ sound (like the "s" in "measure").',
+        hypothesis: 'The suffix "-ion" turns action words (verbs) into naming words (nouns).',
+        testWords: ['act→action', 'create→creation', 'educate→education', 'celebrate→celebration']
+    },
+    'rebuild': {
+        meaning: 'To build something again after it has been damaged or destroyed.',
+        morphemes: {
+            prefix: ['re'],
+            base: ['build'],
+            suffix: []
+        },
+        wordSum: 're + build = rebuild',
+        matrix: {
+            base: 'build',
+            related: [
+                ['rebuild', 'build', 'builder', 'building'],
+                ['rebuilt', 'built', 'builds', 'buildable']
+            ],
+            prefixes: ['re'],
+            suffixes: ['er', 'ing', 's', 'able']
+        },
+        etymology: {
+            modern: 'rebuild (English, 2026)',
+            stages: [
+                { word: 'rebuild', language: 'Middle English (1400s)', note: 're- (again) + build' },
+                { word: 'byldan', language: 'Old English (700s)', note: 'meaning "to construct"' }
+            ],
+            fact: 'The prefix "re-" means "again"! You can add it to many action words: rewrite, replay, rethink, redo. It\'s one of the most useful prefixes in English!'
+        },
+        graphemes: ['r', 'e', 'b', 'ui', 'l', 'd'],
+        phonemes: ['/r/', '/i/', '/b/', '/ɪ/', '/l/', '/d/'],
+        spellingRule: 'The "ui" in "build" is an unusual spelling for the /ɪ/ sound. This is because "build" comes from Old English and kept its old spelling.',
+        hypothesis: 'The prefix "re-" means "again" and can be added to action words.',
+        testWords: ['reread', 'rewrite', 'replay', 'rethink', 'remake']
+    }
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Word Detective AI initialized');
+    updateProgressBar();
+});
+
+// Word Investigation Functions
+function selectWord(word) {
+    document.getElementById('wordInput').value = word;
+    investigateWord();
+}
+
+function investigateWord() {
+    const input = document.getElementById('wordInput').value.trim().toLowerCase();
+    
+    if (!input) {
+        alert('Please enter a word!');
+        return;
+    }
+    
+    if (!wordData[input]) {
+        alert('Let\'s try a different word! Pick one from the cards below.');
+        return;
+    }
+    
+    currentWord = input;
+    currentStep = 1;
+    
+    // Show meaning
+    const meaningDiv = document.getElementById('wordMeaning');
+    const meaningText = document.getElementById('meaningText');
+    meaningText.textContent = wordData[input].meaning;
+    meaningDiv.classList.remove('hidden');
+    
+    // Update AI guidance
+    updateAIGuidance('Great choice! I see you picked "' + input + '". Now let\'s break it into parts. Click the button below when you\'re ready!');
+    
+    // Show next step button
+    setTimeout(() => {
+        if (confirm('Ready to analyze "' + input + '" and break it into morphemes?')) {
+            goToStep(2);
+        }
+    }, 2000);
+}
+
+// Step Navigation
+function goToStep(step) {
+    currentStep = step;
+    
+    // Hide all steps
+    for (let i = 1; i <= 5; i++) {
+        document.getElementById('step' + i).classList.add('hidden');
+    }
+    
+    // Show current step
+    document.getElementById('step' + step).classList.remove('hidden');
+    
+    // Update progress bar
+    updateProgressBar();
+    
+    // Load step content
+    switch(step) {
+        case 2:
+            loadMorphologyStep();
+            break;
+        case 3:
+            loadEtymologyStep();
+            break;
+        case 4:
+            loadGraphemePhonemeStep();
+            break;
+        case 5:
+            loadHypothesisStep();
+            break;
+    }
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgressBar() {
+    const steps = document.querySelectorAll('.progress-step');
+    steps.forEach((step, index) => {
+        step.classList.remove('active', 'completed');
+        if (index + 1 < currentStep) {
+            step.classList.add('completed');
+        } else if (index + 1 === currentStep) {
+            step.classList.add('active');
+        }
+    });
+}
+
+// Step 2: Morphology
+function loadMorphologyStep() {
+    const data = wordData[currentWord];
+    
+    // Load morpheme bank
+    const bank = document.getElementById('morphemeBank');
+    bank.innerHTML = '';
+    
+    if (data.morphemes.prefix.length > 0) {
+        data.morphemes.prefix.forEach(m => {
+            bank.innerHTML += `<span class="morpheme-prefix cursor-move" draggable="true" ondragstart="drag(event)">${m}</span>`;
+        });
+    }
+    
+    data.morphemes.base.forEach(m => {
+        bank.innerHTML += `<span class="morpheme-base cursor-move" draggable="true" ondragstart="drag(event)">${m}</span>`;
+    });
+    
+    if (data.morphemes.suffix.length > 0) {
+        data.morphemes.suffix.forEach(m => {
+            bank.innerHTML += `<span class="morpheme-suffix cursor-move" draggable="true" ondragstart="drag(event)">${m}</span>`;
+        });
+    }
+    
+    // Setup drop zone
+    const dropZone = document.getElementById('wordSum');
+    dropZone.innerHTML = '<span class="text-gray-400">Drop morphemes here...</span>';
+    dropZone.ondrop = drop;
+    dropZone.ondragover = allowDrop;
+    
+    // Load matrix
+    loadMorphMatrix();
+    
+    updateAIGuidance('Excellent! Now drag the morphemes to build your word. Remember: prefixes come first, then the base, then suffixes. The colors will help you! 🎨');
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.textContent);
+    ev.dataTransfer.setData("class", ev.target.className);
+}
+
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    const text = ev.dataTransfer.getData("text");
+    const className = ev.dataTransfer.getData("class");
+    
+    const dropZone = document.getElementById('wordSum');
+    if (dropZone.querySelector('.text-gray-400')) {
+        dropZone.innerHTML = '';
+    }
+    
+    const span = document.createElement('span');
+    span.className = className;
+    span.textContent = text;
+    dropZone.appendChild(span);
+    
+    if (selectedMorphemes.length > 0) {
+        const plus = document.createElement('span');
+        plus.className = 'text-2xl mx-2';
+        plus.textContent = '+';
+        dropZone.insertBefore(plus, span);
+    }
+    
+    selectedMorphemes.push(text);
+}
+
+function resetWordSum() {
+    selectedMorphemes = [];
+    const dropZone = document.getElementById('wordSum');
+    dropZone.innerHTML = '<span class="text-gray-400">Drop morphemes here...</span>';
+    document.getElementById('morphologyFeedback').classList.add('hidden');
+}
+
+function checkWordSum() {
+    const data = wordData[currentWord];
+    const correct = [...data.morphemes.prefix, ...data.morphemes.base, ...data.morphemes.suffix];
+    
+    const feedback = document.getElementById('morphologyFeedback');
+    
+    if (JSON.stringify(selectedMorphemes) === JSON.stringify(correct)) {
+        feedback.className = 'bg-green-100 border-2 border-green-500 rounded-lg p-4 mb-6';
+        feedback.innerHTML = `
+            <h4 class="font-bold text-green-800 mb-2">🎉 Perfect! You got it!</h4>
+            <p class="text-gray-700 mb-3">The word sum is: <strong>${data.wordSum}</strong></p>
+            <button onclick="goToStep(3)" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
+                Continue to Etymology →
+            </button>
+        `;
+        feedback.classList.remove('hidden');
+        
+        updateAIGuidance('Fantastic work! You correctly identified all the morphemes. Now let\'s explore where this word came from! 🌳');
+    } else {
+        feedback.className = 'bg-yellow-100 border-2 border-yellow-500 rounded-lg p-4 mb-6';
+        feedback.innerHTML = `
+            <h4 class="font-bold text-yellow-800 mb-2">🤔 Not quite right...</h4>
+            <p class="text-gray-700">Try again! Remember the order: prefix + base + suffix</p>
+        `;
+        feedback.classList.remove('hidden');
+        
+        updateAIGuidance('That\'s okay! Learning takes practice. Remember: prefixes go first, then the base word, then suffixes. Try dragging them in a different order! 💪');
+    }
+}
+
+function loadMorphMatrix() {
+    const data = wordData[currentWord];
+    const matrix = document.getElementById('morphMatrix');
+    
+    let html = '<thead><tr>';
+    html += '<th class="matrix-header">Base: ' + data.matrix.base + '</th>';
+    data.matrix.suffixes.forEach(suffix => {
+        html += '<th class="matrix-header">+ ' + suffix + '</th>';
+    });
+    html += '</tr></thead><tbody>';
+    
+    // Add prefix rows
+    if (data.matrix.prefixes.length > 0) {
+        data.matrix.prefixes.forEach(prefix => {
+            html += '<tr>';
+            html += '<td class="matrix-cell font-bold">' + prefix + ' +</td>';
+            data.matrix.suffixes.forEach(() => {
+                html += '<td class="matrix-cell">...</td>';
+            });
+            html += '</tr>';
+        });
+    }
+    
+    // Add related words rows
+    data.matrix.related.forEach(row => {
+        html += '<tr>';
+        row.forEach(word => {
+            html += '<td class="matrix-cell">' + word + '</td>';
+        });
+        html += '</tr>';
+    });
+    
+    html += '</tbody>';
+    matrix.innerHTML = html;
+}
+
+// Step 3: Etymology
+function loadEtymologyStep() {
+    const data = wordData[currentWord];
+    const tree = document.getElementById('etymologyTree');
+    
+    let html = '<div class="text-center mb-6">';
+    html += '<div class="tree-node text-xl font-bold">' + data.etymology.modern + '</div>';
+    html += '</div>';
+    
+    data.etymology.stages.forEach(stage => {
+        html += '<div class="tree-line"></div>';
+        html += '<div class="text-center mb-4">';
+        html += '<div class="tree-node">';
+        html += '<div class="font-bold text-lg">' + stage.word + '</div>';
+        html += '<div class="text-sm text-gray-600">' + stage.language + '</div>';
+        html += '<div class="text-xs text-gray-500 mt-1">' + stage.note + '</div>';
+        html += '</div>';
+        html += '</div>';
+    });
+    
+    tree.innerHTML = html;
+    
+    document.getElementById('etymologyFact').textContent = data.etymology.fact;
+    
+    updateAIGuidance('Wow! Look at how old this word is! Words travel through time and across languages. Isn\'t that amazing? Ready to explore how we spell it? 🔤');
+    
+    setTimeout(() => {
+        if (confirm('Ready to learn about the sounds and letters in "' + currentWord + '"?')) {
+            goToStep(4);
+        }
+    }, 3000);
+}
+
+// Step 4: Grapheme-Phoneme
+function loadGraphemePhonemeStep() {
+    const data = wordData[currentWord];
+    
+    const graphemeDisplay = document.getElementById('graphemeDisplay');
+    graphemeDisplay.innerHTML = '';
+    data.graphemes.forEach(g => {
+        graphemeDisplay.innerHTML += '<div class="grapheme-box">' + g + '</div>';
+    });
+    
+    const phonemeDisplay = document.getElementById('phonemeDisplay');
+    phonemeDisplay.innerHTML = '';
+    data.phonemes.forEach(p => {
+        phonemeDisplay.innerHTML += '<div class="phoneme-box">' + p + '</div>';
+    });
+    
+    document.getElementById('spellingExplanation').textContent = data.spellingRule;
+    
+    updateAIGuidance('See how each letter or letter combination makes a sound? This is why English spelling makes sense when you understand the patterns! 🎵');
+    
+    setTimeout(() => {
+        if (confirm('Ready to test your hypothesis about spelling rules?')) {
+            goToStep(5);
+        }
+    }, 3000);
+}
+
+function playWordAudio() {
+    updateAIGuidance('🔊 Listening to words helps you connect sounds to letters! (In a real app, you would hear the word pronounced here.)');
+    alert('🔊 In the real application, you would hear "' + currentWord + '" pronounced clearly!');
+}
+
+// Step 5: Hypothesis Testing
+function loadHypothesisStep() {
+    const data = wordData[currentWord];
+    
+    document.getElementById('hypothesisStatement').textContent = data.hypothesis;
+    
+    const testWords = document.getElementById('testWords');
+    testWords.innerHTML = '';
+    data.testWords.forEach(word => {
+        testWords.innerHTML += `
+            <div class="bg-blue-50 border-2 border-blue-300 rounded-lg p-3 text-center">
+                <span class="font-semibold text-blue-800">${word}</span>
+                <div class="mt-2">
+                    <span class="text-2xl">✓</span>
+                </div>
+            </div>
+        `;
+    });
+    
+    document.getElementById('hypothesisResults').textContent = 
+        'Your hypothesis is correct! All these words follow the same spelling pattern. You\'re becoming a real word detective! 🔍';
+    
+    updateAIGuidance('Excellent scientific thinking! Testing hypotheses is exactly what real linguists do. You\'ve mastered the complete word inquiry process! 🎓');
+}
+
+function completeInquiry() {
+    document.getElementById('successModal').classList.remove('hidden');
+    updateAIGuidance('🎉 Congratulations! You\'ve completed a full Structured Word Inquiry! You\'ve earned the Word Detective badge. Ready to investigate another word?');
+}
+
+function closeModal() {
+    document.getElementById('successModal').classList.add('hidden');
+    location.reload();
+}
+
+// AI Guide Functions
+function updateAIGuidance(message) {
+    const guidance = document.getElementById('aiGuidance');
+    guidance.style.opacity = '0';
+    setTimeout(() => {
+        guidance.textContent = message;
+        guidance.style.opacity = '1';
+    }, 300);
+}
+
+function askAI() {
+    const messages = [
+        'I\'m here to help! What would you like to know? 😊',
+        'Great question! Remember, every word has a story. Let\'s discover it together! 📖',
+        'You\'re doing great! Keep exploring and asking questions! 🌟',
+        'Need a hint? Try looking at the colors - they show you different types of morphemes! 🎨'
+    ];
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    updateAIGuidance(randomMessage);
+}
