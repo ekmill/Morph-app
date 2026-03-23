@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordBricks</title>
+    <style>
+        .center-text {
+          text-align: center;
+        }
+        body { font-family: Georgia, serif; background: #f5f0e8; margin: 0; padding: 20px; color: #2a2a2a; }
+        h2 { text-align: center; letter-spacing: 1px; margin-bottom: 4px; }
+        p.sub { text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 16px; }
+        
+        /* MATRIX */
+        .matrix { display: grid; grid-template-columns: 90px 180px 1fr; border: 3px solid #8b1a1a; width: fit-content; margin: 0 auto 24px; background: #fffff0; }
+        .matrix-cell { border: 2px solid #8b1a1a; padding: 10px 14px; font-size: 1rem; }
+        .prefix-col { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; border-right: 3px solid #8b1a1a; }
+        .root-col { display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 3px solid #8b1a1a; padding: 16px; }
+        .root-word { font-size: 2rem; font-weight: bold; }
+        .root-def { font-style: italic; color: #555; font-size: 0.85rem; margin-top: 4px; }
+        .suffix-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .suffix-wide { grid-column: span 2; border-bottom: 2px solid #8b1a1a; }
+        .morpheme { background: #7c1e1e; color: #fff; cursor: grab; display: inline-block; padding: 3px 8px; border-radius: 3px; user-select: none; font-size: 0.95rem; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.3), 1px 1px 3px rgba(0,0,0,0.3); }
+        .morpheme:hover { background: #9b2626; }
+        
+        /* WORD SUMS */
+        .sums-area { max-width: 780px; margin: 0 auto 20px; }
+        .sums-area h3 { font-size: 1rem; margin-bottom: 8px; color: #555; }
+        .sum-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; min-height: 36px; flex-wrap: wrap; }
+        .drop-slot { width: 70px; height: 32px; border: 2px dashed #aaa; border-radius: 4px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: #bbb; }
+        .drop-slot.filled { border: 2px solid #7c1e1e; color: #fff; background: #7c1e1e; font-size: 0.9rem; cursor: pointer; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.3); }
+        .drop-slot.filled:hover { background: #9b2626; }
+        .drop-slot.over { background: #fef9c3; border-color: #ca8a04; }
+        .plus { color: #888; font-size: 1rem; }
+        .result { font-size: 0.9rem; margin-left: 6px; }
+        .result.valid { color: #15803d; font-weight: bold; }
+        .result.invalid { color: #999; font-style: italic; }
+        #next-lesson { display: none; text-align: center; margin-top: 20px; }
+        #next-lesson a { font-size: 1.1rem; font-weight: bold; color: #fff; background: #16a34a; padding: 10px 24px; border-radius: 8px; text-decoration: none; }
+        #next-lesson a:hover { background: #15803d; }
+        #counter { text-align: center; color: #555; font-size: 0.9rem; margin-bottom: 8px; }
+        .word-input { width: 110px; height: 30px; border: 2px solid #aaa; border-radius: 4px; padding: 0 6px; font-size: 0.9rem; font-family: Georgia, serif; }
+        .word-input:focus { outline: none; border-color: #7c1e1e; }
+        .equals { color: #888; font-size: 1rem; }
+    </style>
+</head>
+<body>
+    <h1 class="center-text">WordBricks</h1>
+    <h2 class="center-text">Learn the words' stories</h2>
+    <!--matrix w/drag and drop activity to build words from matrix and view word sum along with definition again-->
+    <nav> 
+        <a href="index.html">Home</a>
+        <a href="lesson2.html">Back</a>
+         <!-- Link to the new page -->
+    </nav>
+    <h2>Word Matrix: <em>love</em></h2>
+<p class="sub">Drag morphemes from the matrix into the word sum slots. Click a filled slot to clear it.</p>
+ 
+<div class="matrix">
+  <div class="matrix-cell prefix-col">
+    <span class="morpheme" draggable="true" data-m="be">be</span>
+    <span class="morpheme" draggable="true" data-m="un">un</span>
+  </div>
+  <div class="matrix-cell root-col">
+    <span class="morpheme" draggable="true" data-m="love" style="font-size:1.5rem; font-weight:bold; padding: 6px 14px;">love</span>
+    <div class="root-def" style="margin-top:8px;">"denotation"</div>
+  </div>
+  <div class="suffix-grid">
+    <div class="matrix-cell suffix-wide">
+      <span class="morpheme" draggable="true" data-m="able">able</span> &nbsp;
+      <span class="morpheme" draggable="true" data-m="ed">ed</span> &nbsp;
+      <span class="morpheme" draggable="true" data-m="less">less</span> &nbsp;
+      <span class="morpheme" draggable="true" data-m="lorn">lorn</span> &nbsp;
+      <span class="morpheme" draggable="true" data-m="s">s</span> &nbsp;
+      <span class="morpheme" draggable="true" data-m="sick">sick</span>
+    </div>
+    <div class="matrix-cell"><span class="morpheme" draggable="true" data-m="bird">bird</span><br><span class="morpheme" draggable="true" data-m="er">er</span></div>
+    <div class="matrix-cell"><span class="morpheme" draggable="true" data-m="s">s</span></div>
+    <div class="matrix-cell"><span class="morpheme" draggable="true" data-m="ing">ing</span></div>
+    <div class="matrix-cell"><span class="morpheme" draggable="true" data-m="ly">ly</span></div>
+    <div class="matrix-cell"><span class="morpheme" draggable="true" data-m="ly">ly</span></div>
+    <div class="matrix-cell"><span class="morpheme" draggable="true" data-m="er">er</span><br><span class="morpheme" draggable="true" data-m="est">est</span><br><span class="morpheme" draggable="true" data-m="ness">ness</span><br><span class="morpheme" draggable="true" data-m="s">s</span></div>
+  </div>
+</div>
+ 
+<div id="counter">Words built: 0 / 20</div>
+<div class="sums-area" id="sums"></div>
+<div id="next-lesson">🎉 Amazing! <a href="lesson4.html">Move to Lesson 4 →</a></div>
+ 
+<script>
+const WORDS = {
+  "love": "to feel deep affection", "loves": "feels deep affection", "loved": "felt deep affection",
+  "loving": "showing affection", "lover": "one who loves", "lovely": "beautiful; delightful",
+  "lovelorn": "sad from unrequited love", "loveless": "without love", "loveable": "inspiring affection",
+  "lovesick": "pining from love", "lovebird": "an affectionate parrot; a loving person",
+  "lovebirds": "an affectionate couple", "lovelier": "more lovely", "loveliest": "most lovely",
+  "loveliness": "the quality of being lovely", "lovelies": "lovely ones",
+  "beloved": "dearly loved", "belove": "to love deeply",
+  "unloved": "not loved", "unlovable": "incapable of being loved", "unloving": "not showing love"
+};
+const SLOTS = 4;
+const TOTAL = 5;
+let built = 0;
+const usedWords = new Set();
+ 
+const sumsDiv = document.getElementById('sums');
+let dragging = null;
+let draggingFromSlot = null;
+ 
+document.querySelectorAll('.morpheme').forEach(m => {
+  m.addEventListener('dragstart', e => {
+    dragging = m.dataset.m;
+    draggingFromSlot = null;
+    e.dataTransfer.effectAllowed = 'copy';
+  });
+});
+ 
+function makeRow(index) {
+  const row = document.createElement('div');
+  row.className = 'sum-row';
+  row.dataset.index = index;
+  const slots = [];
+ 
+  for (let i = 0; i < SLOTS; i++) {
+    if (i > 0) { const pl = document.createElement('span'); pl.className = 'plus'; pl.textContent = '+'; row.appendChild(pl); }
+    const slot = document.createElement('div');
+    slot.className = 'drop-slot';
+    slot.textContent = '—';
+    slot.dataset.val = '';
+ 
+    slot.setAttribute('draggable', 'false');
+    slot.addEventListener('dragstart', e => {
+      if (!slot.classList.contains('filled')) { e.preventDefault(); return; }
+      dragging = slot.dataset.val;
+      draggingFromSlot = slot;
+      e.dataTransfer.effectAllowed = 'move';
+    });
+ 
+    slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('over'); });
+    slot.addEventListener('dragleave', () => slot.classList.remove('over'));
+    slot.addEventListener('drop', e => {
+      e.preventDefault(); slot.classList.remove('over');
+      if (!dragging) return;
+      // Clear the source slot if dragging from another slot
+      if (draggingFromSlot && draggingFromSlot !== slot) {
+        draggingFromSlot.dataset.val = '';
+        draggingFromSlot.textContent = '—';
+        draggingFromSlot.classList.remove('filled');
+        draggingFromSlot.setAttribute('draggable', 'false');
+      }
+      slot.dataset.val = dragging;
+      slot.textContent = dragging;
+      slot.classList.add('filled');
+      slot.setAttribute('draggable', 'true');
+      dragging = null; draggingFromSlot = null;
+      checkRow(row, slots, result, input);
+    });
+ 
+    slot.addEventListener('click', () => {
+      if (!slot.classList.contains('filled')) return;
+      slot.dataset.val = ''; slot.textContent = '—';
+      slot.classList.remove('filled'); slot.setAttribute('draggable', 'false');
+      checkRow(row, slots, result, input);
+    });
+ 
+    slots.push(slot);
+    row.appendChild(slot);
+  }
+ 
+  // equals sign + text input
+  const eq = document.createElement('span'); eq.className = 'equals'; eq.textContent = '=';
+  row.appendChild(eq);
+  const input = document.createElement('input');
+  input.type = 'text'; input.className = 'word-input'; input.placeholder = 'type word…';
+  input.addEventListener('input', () => checkRow(row, slots, result, input));
+  row.appendChild(input);
+ 
+  const result = document.createElement('span');
+  result.className = 'result';
+  row.appendChild(result);
+  return row;
+}
+ 
+function checkRow(row, slots, result, input) {
+  const parts = slots.map(s => s.dataset.val).filter(v => v);
+  const typed = input.value.trim().toLowerCase();
+  const prevWord = row.dataset.word || '';
+ 
+  // Must have at least 2 morpheme slots filled
+  if (parts.length < 2) {
+    if (prevWord) { usedWords.delete(prevWord); recount(); }
+    row.dataset.word = '';
+    result.textContent = parts.length === 1 ? 'Add at least one more morpheme' : '';
+    result.className = 'result invalid';
+    return;
+  }
+ 
+  if (!typed) {
+    if (prevWord) { usedWords.delete(prevWord); recount(); }
+    row.dataset.word = '';
+    result.textContent = ''; result.className = 'result'; return;
+  }
+ 
+  // Word must be in WORDS dictionary
+  if (!WORDS[typed]) {
+    if (prevWord) { usedWords.delete(prevWord); recount(); }
+    row.dataset.word = '';
+    result.textContent = `"${typed}" — not in the word family`; result.className = 'result invalid'; return;
+  }
+ 
+  // Duplicate check
+  if (typed !== prevWord && usedWords.has(typed)) {
+    if (prevWord) { usedWords.delete(prevWord); recount(); }
+    row.dataset.word = '';
+    result.textContent = `"${typed}" already used!`; result.className = 'result invalid'; return;
+  }
+ 
+  // Valid!
+  if (prevWord && prevWord !== typed) { usedWords.delete(prevWord); recount(); }
+  usedWords.add(typed);
+  row.dataset.word = typed;
+  result.textContent = `✓ ${typed}: ${WORDS[typed]}`; result.className = 'result valid';
+  recount();
+}
+ 
+function recount() {
+  built = usedWords.size;
+  document.getElementById('counter').textContent = `Words built: ${built} / ${TOTAL}`;
+  if (built >= TOTAL) document.getElementById('next-lesson').style.display = 'block';
+  else document.getElementById('next-lesson').style.display = 'none';
+}
+ 
+for (let i = 0; i < TOTAL; i++) sumsDiv.appendChild(makeRow(i));
+</script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordBricks</title>
+    <style>
+        .center-text {
+          text-align: center;
+        }
+        body { font-family: Georgia, serif; background: #f5f0e8; margin: 0; padding: 24px; color: #2a2a2a; max-width: 620px; margin: 0 auto; padding: 24px; }
+        h2 { text-align: center; margin-bottom: 4px; }
+        p.sub { text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 24px; }
+        .card { background: #fffff0; border: 2px solid #8b1a1a; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; }
+        .word-sum { font-size: 1.15rem; font-weight: bold; margin-bottom: 10px; }
+        .question { color: #444; font-size: 0.95rem; margin-bottom: 8px; }
+        .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        button { padding: 7px 18px; border-radius: 5px; border: 2px solid #8b1a1a; background: #fffff0; cursor: pointer; font-family: Georgia, serif; font-size: 0.9rem; }
+        button:hover:not(:disabled) { background: #f5d5d5; }
+        button:disabled { opacity: 0.5; cursor: default; }
+        button.correct { background: #bbf7d0; border-color: #16a34a; }
+        button.wrong { background: #fecaca; border-color: #dc2626; }
+        .feedback { margin-top: 8px; font-size: 0.9rem; }
+        .feedback.good { color: #15803d; font-weight: bold; }
+        .feedback.bad { color: #b91c1c; }
+        .rule-section { margin-top: 10px; }
+        .rule-section .question { margin-bottom: 6px; }
+        .rule-feedback { margin-top: 8px; font-size: 0.9rem; color: #15803d; font-weight: bold; }
+        #next-wrap { display: none; text-align: center; margin-top: 20px; }
+        #next-wrap a { font-size: 1rem; font-weight: bold; color: #fff; background: #16a34a; padding: 10px 22px; border-radius: 8px; text-decoration: none; }
+        #next-wrap a:hover { background: #15803d; }
+</style>
+</head>
+    <h1 class="center-text">WordBricks</h1>
+    <h2 class="center-text">Put the bricks together</h2>
+    <p class="center-text">Why are the words built how they are?</p>
+    <h3 class="center-text">Do these word sums spell out the final word? Yes or no?</h3>
+    <!--matrix w/drag and drop activity to build words from matrix and view word sum along with definition again-->
+    <nav> 
+        <a href="index.html">Home</a>
+        <a href="lesson3.html">Back</a>
+         <!-- Link to the new page -->
+    </nav>
+  
+  </head>
+  <body>   
+  <div id="sums"></div>
+  <div id="next-wrap">✅ Great work! <a href="index.html" id="next-link">Continue →</a></div>
+   
+  <script>
+  const items = [
+    { sum: "love + ly → lovely",        answer: "yes", result: "lovely" },
+    { sum: "love + ly + est → loveliest", answer: "no",  result: "loveliest" },
+    { sum: "un + love + ed → unloved",   answer: "no",  result: "unloved" }
+  ];
+   
+  let rulesNeeded = 0;
+  let rulesAnswered = 0;
+   
+  items.forEach((item, i) => {
+    const card = document.createElement('div'); card.className = 'card';
+    card.innerHTML = `<div class="word-sum">${item.sum}</div>
+      <div class="question">Does the result spell out exactly as shown?</div>
+      <div class="btn-row">
+        <button id="yes-${i}">Yes</button>
+        <button id="no-${i}">No</button>
+      </div>
+      <div class="feedback" id="fb-${i}"></div>
+      <div class="rule-section" id="rule-${i}" style="display:none">
+        <div class="question">Why is the spelling different?</div>
+        <div class="btn-row">
+          <button id="r1-${i}">Rule 1</button>
+          <button id="r2-${i}">Rule 2</button>
+          <button id="r3-${i}">Rule 3</button>
+        </div>
+        <div class="rule-feedback" id="rfb-${i}"></div>
+      </div>`;
+    document.getElementById('sums').appendChild(card);
+   
+    if (item.answer === 'no') rulesNeeded++;
+   
+    const yesBtn = document.getElementById(`yes-${i}`);
+    const noBtn  = document.getElementById(`no-${i}`);
+    const fb     = document.getElementById(`fb-${i}`);
+   
+    function lockYesNo(chosen, correct) {
+      yesBtn.disabled = noBtn.disabled = true;
+      if (correct) { chosen.classList.add('correct'); fb.textContent = '✓ Correct!'; fb.className = 'feedback good'; }
+      else         { chosen.classList.add('wrong');   fb.textContent = 'description'; fb.className = 'feedback bad'; }
+    }
+   
+    yesBtn.addEventListener('click', () => {
+      lockYesNo(yesBtn, item.answer === 'yes');
+      if (item.answer === 'no') document.getElementById(`rule-${i}`).style.display = 'block';
+    });
+   
+    noBtn.addEventListener('click', () => {
+      lockYesNo(noBtn, item.answer === 'no');
+      if (item.answer === 'no') document.getElementById(`rule-${i}`).style.display = 'block';
+    });
+   
+    if (item.answer === 'no') {
+      [1,2,3].forEach(r => {
+        document.getElementById(`r${r}-${i}`).addEventListener('click', () => {
+          [1,2,3].forEach(x => document.getElementById(`r${x}-${i}`).disabled = true);
+          const rfb = document.getElementById(`rfb-${i}`);
+          if (r === 1) {
+            document.getElementById(`r1-${i}`).classList.add('correct');
+            rfb.textContent = 'explanation'; rfb.style.color = '#15803d';
+          } else {
+            document.getElementById(`r${r}-${i}`).classList.add('wrong');
+            rfb.textContent = 'explanation'; rfb.style.color = '#b91c1c';
+          }
+          rulesAnswered++;
+          if (rulesAnswered >= rulesNeeded) unlockNext();
+        });
+      });
+    }
+  });
+   
+  function unlockNext() {
+    document.getElementById('next-wrap').style.display = 'block';
+    // Also mark activity complete for index.html to read
+    try { localStorage.setItem('wordSumActivityDone', 'true'); } catch(e) {}
+  }
+</script>
+</body>
+</html>

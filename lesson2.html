@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordBricks</title>
+    <style>
+        .center-text {
+          text-align: center;
+        }
+        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 16px; }
+        .question { margin-bottom: 32px; }
+        h3 { margin-bottom: 10px; }
+        .options { display: flex; flex-direction: column; gap: 8px; }
+        button { padding: 10px 16px; font-size: 1rem; border: 2px solid #6366f1; border-radius: 6px; background: #e0e7ff; cursor: pointer; text-align: left; }
+        button:hover:not(:disabled) { background: #c7d2fe; }
+        button:disabled { cursor: default; }
+        button.correct { background: #bbf7d0; border-color: #16a34a; }
+        button.incorrect { background: #fecaca; border-color: #dc2626; }
+        .feedback { margin-top: 10px; font-size: 0.95rem; min-height: 1.2em; }
+        .feedback.correct { color: #15803d; font-weight: bold; }
+        .feedback.incorrect { color: #dc2626; }
+        #next-lesson { display: none; margin-top: 8px; }
+        #next-lesson a { font-size: 1.1rem; font-weight: bold; color: #fff; background: #16a34a; padding: 10px 20px; border-radius: 8px; text-decoration: none; }
+        #next-lesson a:hover { background: #15803d; }
+    </style>
+</head>
+<body>
+    <h1 class="center-text">WordBricks</h1>
+    <h2 class="center-text">Learn how the words are built</h2>
+    <!--multiple choice activities w/morpheme breakdowns here, hover to see morph meanings-->
+    <nav> 
+        <a href="index.html">Home</a>
+        <a href="meaning.html">Back</a>
+         <!-- Link to the new page -->
+    </nav>
+    <h2>Morphological Breakdowns</h2>
+<p>Select the correct way to break down each word into its morphemes.</p>
+ 
+<div class="question" id="q1">
+  <h3>Build the word <em>lovely</em>?</h3>
+  <div class="options">
+    <button onclick="check(this,'q1',false)">lov + ely</button>
+    <button onclick="check(this,'q1',true)">love + ly</button>
+    <button onclick="check(this,'q1',false)">lovely</button>
+  </div>
+  <div class="feedback" id="q1-feedback"></div>
+</div>
+ <!---in prod, delete next fn and add in refs to spreadsheet for each word breakdown and its options-->
+<div class="question" id="q2">
+  <h3>Build the word <em>unloved</em>?</h3>
+  <div class="options">
+    <button onclick="check(this,'q2',false)">un + loved</button>
+    <button onclick="check(this,'q2',false)">un + love + d</button>
+    <button onclick="check(this,'q2',true)">un + love + ed</button>
+  </div>
+  <div class="feedback" id="q2-feedback"></div>
+</div>
+ 
+<div id="next-lesson">🎉 Great work! <a href="lesson3.html">Move to Lesson 3 →</a></div>
+ 
+<script>
+  const feedback = {
+    q1: {
+      correct: "explanation of each morpheme",
+      incorrect: "explanation of why incorrect"
+    },
+    q2: {
+      correct: "explanation of each morpheme",
+      incorrect: "explanation of why incorrect"
+    }
+  };
+ 
+  const answered = { q1: false, q2: false };
+ 
+  function check(btn, qId, isCorrect) {
+    const buttons = btn.closest('.question').querySelectorAll('button');
+    buttons.forEach(b => b.disabled = true);
+    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+    const fb = document.getElementById(qId + '-feedback');
+    fb.textContent = isCorrect ? feedback[qId].correct : feedback[qId].incorrect;
+    fb.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+    answered[qId] = true;
+    if (Object.values(answered).every(Boolean)) {
+      document.getElementById('next-lesson').style.display = 'block';
+    }
+  }
+</script>
+</body>
+</html>

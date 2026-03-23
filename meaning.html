@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 1</title>
+    <style>
+      .word-bank { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; min-height: 50px; }
+      .word { padding: 8px 16px; background: #e0e7ff; border: 2px solid #6366f1; border-radius: 6px; cursor: grab; user-select: none; font-size: 1rem; }
+      .word:active { cursor: grabbing; opacity: 0.6; }
+      .bins { display: flex; gap: 24px; }
+      .bin { flex: 1; min-height: 120px; border: 2px dashed #999; border-radius: 8px; padding: 12px; }
+      .bin h3 { margin: 0 0 10px; font-size: 1rem; text-align: center; }
+      .bin.over { background: #f0fdf4; border-color: #22c55e; }
+      #related { border-color: #22c55e; }
+      #related h3 { color: #16a34a; }
+      #not-related { border-color: #ef4444; }
+      #not-related h3 { color: #dc2626; }
+      #msg { color: #b91c1c; font-weight: bold; font-size: 1.1rem; min-height: 1.5em; margin-top: 16px; }
+      #next-lesson { display: none; margin-top: 20px; }
+      #next-lesson a { font-size: 1.1rem; font-weight: bold; color: #fff; background: #16a34a; padding: 10px 20px; border-radius: 8px; text-decoration: none; }
+      #next-lesson a:hover { background: #15803d; }
+      .word { position: relative; }
+      .tooltip { display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+        background: #1e1b4b; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 0.85rem;
+        white-space: nowrap; pointer-events: none; z-index: 10; }
+      .tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+        border: 6px solid transparent; border-top-color: #1e1b4b; }
+      .word:hover .tooltip { display: block; }
+    </style>
+    <!-- Link to python file will go here later -->
+</head>
+  <body>
+    <!-- Your visible content will go here -->
+    <h1 class="center-text">Make a Word Family</h1>
+    <h2 class="center-text">Hover over the word base to see its definition</h2>
+    <p class="center-text">Target word: x</p>
+    <nav>
+        <a href="index.html">Home</a>
+         <!-- Link to the new page -->
+    </nav>
+  </body>
+
+  <body>
+  <h1>WordBricks</h1>
+  <h2>Get to know the word's family</h2>
+  <p>Drag each word into the correct bin.</p>
+   
+  <div class="word-bank" id="bank">
+    <div class="word" draggable="true" id="lovely" data-answer="related">lovely<span class="tooltip">definition</span></div>
+    <div class="word" draggable="true" id="adore" data-answer="not-related">adore<span class="tooltip">definition</span></div>
+    <div class="word" draggable="true" id="unlovable" data-answer="related">unlovable<span class="tooltip">definition</span></div>
+    <div class="word" draggable="true" id="clover" data-answer="not-related">clover<span class="tooltip">definition</span></div>
+  </div>
+   
+  <div class="bins">
+    <div class="bin" id="related" ondragover="allowDrop(event)" ondrop="drop(event)" ondragenter="enter(event)" ondragleave="leave(event)">
+      <h3>✅ Related to Love</h3>
+    </div>
+    <div class="bin" id="not-related" ondragover="allowDrop(event)" ondrop="drop(event)" ondragenter="enter(event)" ondragleave="leave(event)">
+      <h3>❌ Not Related to Love</h3>
+    </div>
+  </div>
+   
+  <div id="msg"></div>
+  <div id="next-lesson">Great job! <a href="lesson2.html">Lesson 2 →</a></div>
+   
+  <script>
+    let dragged = null;
+    let origin = null;
+   
+    document.querySelectorAll('.word').forEach(w => {
+      w.addEventListener('dragstart', e => {
+        dragged = e.target;
+        origin = e.target.parentElement;
+        e.dataTransfer.effectAllowed = 'move';
+      });
+    });
+   
+    function allowDrop(e) { e.preventDefault(); }
+   
+    function enter(e) {
+      e.currentTarget.classList.add('over');
+    }
+   
+    function leave(e) {
+      e.currentTarget.classList.remove('over');
+    }
+
+    function checkCompletion() {
+    const total = document.querySelectorAll('.word').length;
+    const placed = document.querySelectorAll('.bin .word').length;
+    if (placed === total) {
+      document.getElementById('next-lesson').style.display = 'block';
+    }
+    } 
+   
+    function drop(e) {
+      e.preventDefault();
+      const bin = e.currentTarget;
+      bin.classList.remove('over');
+   
+      if (dragged.dataset.answer === bin.id) {
+        bin.appendChild(dragged);
+        dragged.setAttribute('draggable', 'false');
+        dragged.style.cursor = 'default';
+        dragged.style.opacity = '1';
+        checkCompletion();
+      } else {
+        origin.appendChild(dragged);
+        const msg = document.getElementById('msg');
+        msg.textContent = '"semantic or phonemic foil"';
+        setTimeout(() => msg.textContent = '', 1000);
+      }
+      dragged = null;
+      origin = null;
+    }
+  </script>
+</html>
